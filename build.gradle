@@ -18,6 +18,8 @@ dependencies {
      compile  'com.auth0:java-jwt:3.3.0'
      compile  'com.okta.jwt:okta-jwt-verifier:0.2.0'     
      compile  'com.amazonaws:aws-java-sdk-api-gateway:1.11.413'
+     compile    'com.googlecode.json-simple:json-simple:1.1'
+     compile  	'com.google.code.gson:gson:2.6.2'
 }
 
 // Task for building the zip file for upload

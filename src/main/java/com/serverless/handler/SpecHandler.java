@@ -1,6 +1,7 @@
 package com.serverless.handler;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,23 +15,24 @@ import com.amazonaws.services.apigateway.model.GetExportRequest;
 import com.amazonaws.services.apigateway.model.GetExportResult;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.serverless.ApiGatewayResponse;
+import com.serverless.ApiGatewayIntegratedRequest;
+import com.serverless.ApiGatewayIntegratedResponse;
 import com.serverless.CommonUtils;
 
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-public class SpecHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class SpecHandler implements RequestHandler<ApiGatewayIntegratedRequest, ApiGatewayIntegratedResponse> {
     public static final Logger LOGGER = LoggerFactory.getLogger(SpecHandler.class);
     public static final String EXPORT_TYPE = "swagger";
     public static final int HTTP_CODE_200 = 200;
     public static final int HTTP_CODE_500 = 500;
 
     @Override
-    public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
+    public ApiGatewayIntegratedResponse handleRequest(ApiGatewayIntegratedRequest apiRequest, Context context) {
         String stage = "dev";
-        String restApiId = "3c1enr5j5g";
+        String restApiId = "w8clar43qi";
         String region = "us-east-2";
 
         LOGGER.debug("SpecHandler.doProcess: restApiId:: {}", restApiId);
@@ -63,21 +65,20 @@ public class SpecHandler implements RequestHandler<Map<String, Object>, ApiGatew
             e.printStackTrace();
         }
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("X-Powered-By", "AWS Lambda & Serverless");
-        headers.put("Content-Type", "application/json");
-        headers.put("access-control-allow-origin", "*");
+        //Map<String, String> headers = new HashMap<>();
+        //headers.put("X-Powered-By", "AWS Lambda & Serverless");
+        //headers.put("Content-Type", "application/json");
+        //headers.put("access-control-allow-origin", "*");
 
         if (CommonUtils.isNotBlank(jsonString)) {
-            return ApiGatewayResponse.builder()
-                    .setStatusCode(HTTP_CODE_200)
-                    .setRawBody(jsonString)
-                    .setHeaders(headers)
+            return ApiGatewayIntegratedResponse.builder().setStatusCode(HTTP_CODE_200).setObjectBody(json)
+                    .setHeaders(Collections.singletonMap("access-control-allow-origin",
+                            "*"))
                     .build();
         }
-        return ApiGatewayResponse.builder()
-                .setStatusCode(HTTP_CODE_500)
-                .setHeaders(headers)
+        return ApiGatewayIntegratedResponse.builder().setStatusCode(HTTP_CODE_500)
+                .setHeaders(Collections.singletonMap("access-control-allow-origin",
+                		"*"))
                 .build();
     }
 }
